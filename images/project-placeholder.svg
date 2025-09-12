@@ -1,0 +1,24 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="400" fill="#f0f0f0"/>
+  
+  <!-- Decorative elements -->
+  <rect x="50" y="50" width="500" height="300" rx="10" fill="#e0e0e0" stroke="#cccccc" stroke-width="2"/>
+  
+  <!-- Project icon -->
+  <circle cx="300" cy="150" r="50" fill="#4776E6"/>
+  <path d="M280 130 L280 170 L330 150 Z" fill="white"/>
+  
+  <!-- Text placeholder -->
+  <rect x="150" y="220" width="300" height="20" rx="5" fill="#cccccc"/>
+  <rect x="200" y="250" width="200" height="20" rx="5" fill="#cccccc"/>
+  
+  <!-- Decorative corner elements -->
+  <circle cx="80" cy="80" r="10" fill="#4776E6" opacity="0.7"/>
+  <circle cx="520" cy="80" r="10" fill="#8E54E9" opacity="0.7"/>
+  <circle cx="80" cy="320" r="10" fill="#8E54E9" opacity="0.7"/>
+  <circle cx="520" cy="320" r="10" fill="#4776E6" opacity="0.7"/>
+  
+  <!-- Text label -->
+  <text x="300" y="350" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">Project Image</text>
+</svg>
