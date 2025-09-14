@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initProjectFilters();
     initContactForm();
     initScrollAnimation();
+    initBackgroundAnimations();
+    createParticles();
+    initCustomCursor();
 });
 
 // Navigation functionality
@@ -305,3 +308,93 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Custom Cursor Effect
+function initCustomCursor() {
+    const cursor = document.querySelector('.cursor');
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeead'];
+    let currentColorIndex = 0;
+
+    // Update cursor position
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        cursor.style.opacity = '1';
+        cursor.style.backgroundColor = colors[currentColorIndex];
+    });
+
+    // Change color on click
+    document.addEventListener('click', () => {
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
+        cursor.style.backgroundColor = colors[currentColorIndex];
+        cursor.classList.add('active');
+        setTimeout(() => cursor.classList.remove('active'), 500);
+    });
+
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => {
+        cursor.style.opacity = '0';
+    });
+
+    // Show cursor when entering window
+    document.addEventListener('mouseenter', () => {
+        cursor.style.opacity = '1';
+    });
+}
+
+// Full Background Color Animations
+function initBackgroundAnimations() {
+    const gradients = [
+        'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(45deg, #f093fb 0%, #f5576c 100%)',
+        'linear-gradient(45deg, #4facfe 0%, #00f2fe 100%)',
+        'linear-gradient(45deg, #43e97b 0%, #38f9d7 100%)',
+        'linear-gradient(45deg, #fa709a 0%, #fee140 100%)',
+        'linear-gradient(45deg, #a8edea 0%, #fed6e3 100%)',
+        'linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%)',
+        'linear-gradient(45deg, #ffecd2 0%, #fcb69f 100%)'
+    ];
+
+    let currentGradient = 0;
+    
+    function changeBackground() {
+        document.body.style.background = gradients[currentGradient];
+        document.body.style.transition = 'background 2s ease';
+        currentGradient = (currentGradient + 1) % gradients.length;
+    }
+
+    setInterval(changeBackground, 3000);
+
+    document.body.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        const hue = Math.floor((x + y) * 180);
+        document.body.style.filter = `hue-rotate(${hue}deg)`;
+    });
+
+    document.body.addEventListener('touchmove', (e) => {
+        const x = e.touches[0].clientX / window.innerWidth;
+        const y = e.touches[0].clientY / window.innerHeight;
+        
+        const hue = Math.floor((x + y) * 180);
+        document.body.style.filter = `hue-rotate(${hue}deg)`;
+    });
+
+    document.body.addEventListener('mouseleave', () => {
+        document.body.style.filter = 'hue-rotate(0deg)';
+    });
+}
+
+function createParticles() {
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 5) + 's';
+        document.body.appendChild(particle);
+    }
+}
