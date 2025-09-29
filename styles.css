@@ -198,6 +198,45 @@ nav ul li a::after {
     position: absolute;
     bottom: 0;
     left: 0;
+}
+
+/* Custom Cursor Styles */
+.cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4776E6;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.1s ease;
+    mix-blend-mode: difference;
+    background: rgba(71, 118, 230, 0.3);
+}
+
+.cursor.active {
+    transform: scale(1.5);
+    background: rgba(142, 84, 233, 0.6);
+}
+
+/* Mouse Trail Particles */
+.particle-trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease-out;
+    box-shadow: 0 0 6px currentColor;
+}
+
+.particle-trail.active {
+    opacity: 1;
+    transform: scale(1);
+}
     width: 0;
     height: 2px;
     background: linear-gradient(90deg, #4776E6, #8E54E9);

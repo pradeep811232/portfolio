@@ -309,37 +309,193 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Custom Cursor Effect
+// Advanced Custom Cursor with Colorful Trail Effect
 function initCustomCursor() {
-    const cursor = document.querySelector('.cursor');
-    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeead'];
+    // Create cursor element if it doesn't exist
+    let cursor = document.querySelector('.cursor');
+    if (!cursor) {
+        cursor = document.createElement('div');
+        cursor.className = 'cursor';
+        document.body.appendChild(cursor);
+    }
+
+    // Create particles container if it doesn't exist
+    let particlesContainer = document.querySelector('.particles-container');
+    if (!particlesContainer) {
+        particlesContainer = document.createElement('div');
+        particlesContainer.className = 'particles-container';
+        document.body.appendChild(particlesContainer);
+    }
+
+    // Extended color palette for vibrant trails
+    const colors = [
+        '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeead',
+        '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3',
+        '#ff7675', '#74b9ff', '#0984e3', '#fdcb6e', '#e17055',
+        '#00b894', '#00cec9', '#a29bfe', '#fd79a8', '#fdcb6e',
+        '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e', '#e17055',
+        '#00b894', '#00cec9', '#55a3ff', '#ff6b9d', '#c44569'
+    ];
+
+    // Particle trail settings
+    const maxParticles = 50; // Number of particles in trail
+    const particles = [];
+    let mouseX = 0;
+    let mouseY = 0;
     let currentColorIndex = 0;
 
-    // Update cursor position
+    // Mouse move event for cursor and particles
     document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Update cursor position
+        cursor.style.left = (mouseX - 10) + 'px'; // Center the cursor
+        cursor.style.top = (mouseY - 10) + 'px';
         cursor.style.opacity = '1';
-        cursor.style.backgroundColor = colors[currentColorIndex];
-    });
 
-    // Change color on click
-    document.addEventListener('click', () => {
+        // Cycle through colors for cursor
+        cursor.style.backgroundColor = colors[currentColorIndex % colors.length];
+        cursor.style.borderColor = colors[currentColorIndex % colors.length];
+
+        // Create new particle
+        createParticle(mouseX, mouseY);
+
+        // Update existing particles
+        updateParticles();
+
+        // Change cursor color gradually
         currentColorIndex = (currentColorIndex + 1) % colors.length;
-        cursor.style.backgroundColor = colors[currentColorIndex];
-        cursor.classList.add('active');
-        setTimeout(() => cursor.classList.remove('active'), 500);
     });
 
-    // Hide cursor when leaving window
+    // Click event for cursor animation
+    document.addEventListener('click', () => {
+        cursor.classList.add('click');
+        setTimeout(() => cursor.classList.remove('click'), 150);
+
+        // Create burst of particles on click
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+                const angle = (Math.PI * 2 * i) / 10;
+                const speed = 2 + Math.random() * 3;
+                const newX = mouseX + Math.cos(angle) * 50;
+                const newY = mouseY + Math.sin(angle) * 50;
+                createParticle(newX, newY);
+            }, i * 50);
+        }
+    });
+
+    // Create particle function
+    function createParticle(x, y) {
+        if (particles.length >= maxParticles) {
+            // Remove oldest particle
+            const oldParticle = particles.shift();
+            if (oldParticle && oldParticle.element) {
+                oldParticle.element.remove();
+            }
+        }
+
+        // Create new particle element
+        const particle = document.createElement('div');
+        particle.className = 'particle-trail';
+
+        // Random properties
+        const size = Math.random() * 10 + 5; // Size between 5-15px
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const life = Math.random() * 2000 + 1000; // Life span 1-3 seconds
+        const velocityX = (Math.random() - 0.5) * 4; // Random horizontal drift
+        const velocityY = -(Math.random() * 3 + 1); // Upward movement
+        const rotation = Math.random() * 360; // Random rotation
+        const rotationSpeed = (Math.random() - 0.5) * 10; // Rotation speed
+
+        // Set initial styles
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.backgroundColor = color;
+        particle.style.color = color;
+        particle.style.transform = `rotate(${rotation}deg)`;
+        particle.style.opacity = '0.8';
+
+        // Append to container
+        particlesContainer.appendChild(particle);
+
+        // Store particle data
+        particles.push({
+            element: particle,
+            x: x,
+            y: y,
+            vx: velocityX,
+            vy: velocityY,
+            rotation: rotation,
+            rotationSpeed: rotationSpeed,
+            life: life,
+            maxLife: life,
+            size: size,
+            color: color
+        });
+    }
+
+    // Update particles function
+    function updateParticles() {
+        particles.forEach((particle, index) => {
+            // Update position
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            particle.rotation += particle.rotationSpeed;
+            particle.vy += 0.05; // Gravity effect
+
+            // Update life
+            particle.life -= 16; // Approximate 60fps
+
+            // Calculate opacity based on life
+            const progress = particle.life / particle.maxLife;
+            particle.element.style.opacity = Math.max(0, progress * 0.8);
+
+            // Update position and rotation
+            particle.element.style.left = particle.x + 'px';
+            particle.element.style.top = particle.y + 'px';
+            particle.element.style.transform = `rotate(${particle.rotation}deg) scale(${progress})`;
+            particle.element.style.width = particle.size + 'px';
+            particle.element.style.height = particle.size + 'px';
+
+            // Remove dead particles
+            if (particle.life <= 0) {
+                particle.element.remove();
+                particles.splice(index, 1);
+            }
+        });
+    }
+
+    // Hide cursor on leave
     document.addEventListener('mouseleave', () => {
         cursor.style.opacity = '0';
     });
 
-    // Show cursor when entering window
+    // Show on enter
     document.addEventListener('mouseenter', () => {
         cursor.style.opacity = '1';
     });
+
+    // Prevent context menu on right click for custom cursor
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // Add click class for animation
+    cursor.addEventListener('transitionend', () => {
+        if (cursor.classList.contains('click')) {
+            cursor.classList.remove('click');
+        }
+    });
+}
+
+// Initialize cursor after DOM load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCustomCursor);
+} else {
+    initCustomCursor();
 }
 
 // Full Background Color Animations
